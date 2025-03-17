@@ -1,26 +1,58 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-int main(){
-    string s;
-    cin>>s;
+
+int prec(char c) {
+    if (c == '^')
+        return 3;
+    else if (c == '/' || c == '*')
+        return 2;
+    else if (c == '+' || c == '-')
+        return 1;
+    else
+        return -1;
+}
+
+void infixToPostfix(string s) {
     stack<char> st;
-    for(char x : s){
-        if(x>='A'&&x<='Z'){
-            cout<<x;
-        }else{
-            if(st.empty()){
-                st.push(x);
-            }
-            else{
-                cout<<st.top();
+    string result;
+
+    for (int i = 0; i < s.length(); i++) {
+        char c = s[i];
+
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
+            result += c;
+
+        else if (c == '(')
+            st.push('(');
+
+        else if (c == ')') {
+            while (st.top() != '(') {
+                result += st.top();
                 st.pop();
-                st.push(x);
             }
-            
+            st.pop(); 
+        }
+
+        else {
+            while (!st.empty() && prec(c) <= prec(st.top())) {
+                result += st.top();
+                st.pop();
+            }
+            st.push(c);
         }
     }
-    while(!st.empty()){
-        cout<<st.top();
+
+    while (!st.empty()) {
+        result += st.top();
         st.pop();
     }
+
+    cout << result << endl;
+}
+
+int main() {
+    string s;
+    cin>>s;
+    infixToPostfix(s);
+    return 0;
 }
